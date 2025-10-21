@@ -87,7 +87,20 @@
 
 應用程序需要以下環境變量：
 - `SUBSCRIPTION_KEY`: 您的 Azure 翻譯服務訂閱密鑰
-- `SERVICE_REGION`: 您的 Azure 翙譯服務區域（例如: eastasia, westus 等）
+- `SERVICE_REGION`: 您的 Azure 翻譯服務區域（例如: eastasia, westus 等）
+
+請將 `.streamlit/secrets.toml.example` 複製為 `.streamlit/secrets.toml`，並填寫您的 Azure 憑據：
+
+```bash
+cp .streamlit/secrets.toml.example .streamlit/secrets.toml
+```
+
+然後在 `.streamlit/secrets.toml` 文件中填寫您的憑據：
+
+```toml
+SUBSCRIPTION_KEY = "your_actual_subscription_key"
+SERVICE_REGION = "your_service_region"
+```
 
 ## 部署到 Streamlit Cloud
 
@@ -117,11 +130,7 @@
    ```bash
    pip install -r requirements.txt
    ```
-4. 創建 `.env` 文件並配置環境變量：
-   ```
-   SUBSCRIPTION_KEY=your_actual_subscription_key
-   SERVICE_REGION=your_service_region
-   ```
+4. 配置 `.streamlit/secrets.toml` 文件（參見上面的說明）
 5. 運行應用：
    ```bash
    streamlit run app.py

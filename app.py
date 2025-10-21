@@ -2,23 +2,20 @@ import streamlit as st
 import requests
 import json
 import logging
-from dotenv import load_dotenv
-import os
 
 # 設置日誌記錄
 logging.basicConfig(level=logging.DEBUG, format="[%(asctime)s] %(levelname)s: %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p %Z")
 logger = logging.getLogger(__name__)
 
-# 載入環境變數
-load_dotenv()
-SUBSCRIPTION_KEY = os.getenv('SUBSCRIPTION_KEY')
-SERVICE_REGION = os.getenv('SERVICE_REGION')
-
-# 檢查環境變量是否正確加載
-if not SUBSCRIPTION_KEY:
-    logger.error("未設置 SUBSCRIPTION_KEY 環境變量")
-if not SERVICE_REGION:
-    logger.error("未設置 SERVICE_REGION 環境變量")
+# 從 Streamlit secrets 獲取配置
+try:
+    SUBSCRIPTION_KEY = st.secrets["SUBSCRIPTION_KEY"]
+    SERVICE_REGION = st.secrets["SERVICE_REGION"]
+    logger.info("從 Streamlit secrets 成功加載配置")
+except KeyError as e:
+    logger.error(f"未設置 {e} 環境變量")
+    SUBSCRIPTION_KEY = None
+    SERVICE_REGION = None
 
 logger.info(f"加載環境變量 - SUBSCRIPTION_KEY: {'已設置' if SUBSCRIPTION_KEY else '未設置'}, SERVICE_REGION: {SERVICE_REGION or '未設置'}")
 
@@ -270,8 +267,8 @@ def main():
     # 檢查環境變量配置
     if not SUBSCRIPTION_KEY or not SERVICE_REGION:
         st.error("❌ 缺少 Azure 認證信息")
-        st.info("請在項目根目錄創建 `.env` 文件，並配置 `SUBSCRIPTION_KEY` 和 `SERVICE_REGION` 環境變量。")
-        st.info("請參考 `.env.example` 文件的格式進行配置。")
+        st.info("請在 `.streamlit/secrets.toml` 文件中配置 `SUBSCRIPTION_KEY` 和 `SERVICE_REGION`。")
+        st.info("請參考 `.streamlit/secrets.toml.example` 文件的格式進行配置。")
         return
     
     # 用戶界面
